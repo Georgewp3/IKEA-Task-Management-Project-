@@ -91,6 +91,8 @@ export class MemStorage implements IStorage {
     const log: TaskLog = {
       ...insertLog,
       id,
+      status: insertLog.status || "COMPLETED",
+      comment: insertLog.comment || null,
       timestamp: new Date(),
     };
     this.taskLogs.set(id, log);

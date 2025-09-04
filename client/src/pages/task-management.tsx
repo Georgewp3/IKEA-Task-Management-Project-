@@ -1,74 +1,101 @@
 import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 import UserTab from "@/components/user-tab";
 import AdminTab from "@/components/admin-tab";
 
 export default function TaskManagement() {
-  const [activeTab, setActiveTab] = useState("user");
+  const [currentView, setCurrentView] = useState("user");
   const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
+  const [adminCode, setAdminCode] = useState("");
+  const [showAdminPrompt, setShowAdminPrompt] = useState(false);
+  const { toast } = useToast();
+
+  const handleAdminLogin = () => {
+    if (adminCode === "332133") {
+      setIsAdminUnlocked(true);
+      setCurrentView("admin");
+      setShowAdminPrompt(false);
+      setAdminCode("");
+    } else {
+      toast({
+        title: "Access Denied",
+        description: "Incorrect admin code.",
+        variant: "destructive",
+      });
+      setAdminCode("");
+    }
+  };
+
+  const handleBackToUser = () => {
+    setCurrentView("user");
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card border-b border-border shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <div className="bg-primary text-primary-foreground p-2 rounded-lg">
-                <i className="fas fa-tasks text-xl"></i>
-              </div>
-              <h1 className="text-xl font-bold text-foreground">Task Management System</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground">v1.0</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Tab Navigation */}
-      <div className="bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="bg-transparent h-auto p-0">
-              <TabsTrigger 
-                value="user" 
-                className="py-4 px-1 border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary text-muted-foreground hover:text-foreground font-medium text-sm focus:outline-none transition-colors duration-200 bg-transparent rounded-none"
-                data-testid="tab-user"
+    <div className="min-h-screen bg-gray-50">
+      {/* Admin Login Button (Top Right) */}
+      <div className="fixed top-4 right-4 z-50">
+        <div className="relative">
+          <Button
+            onClick={() => setShowAdminPrompt(!showAdminPrompt)}
+            variant="outline"
+            size="sm"
+            className="bg-white shadow-md"
+            data-testid="button-admin-login-toggle"
+          >
+            🔒 Admin Login
+          </Button>
+          
+          {showAdminPrompt && (
+            <div className="absolute right-0 top-full mt-2 bg-white border rounded-md shadow-lg p-3 min-w-[200px]">
+              <Input
+                type="password"
+                placeholder="Enter 6-digit code"
+                maxLength={6}
+                value={adminCode}
+                onChange={(e) => setAdminCode(e.target.value)}
+                className="mb-2"
+                data-testid="input-admin-code"
+                onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
+              />
+              <Button
+                onClick={handleAdminLogin}
+                size="sm"
+                className="w-full"
+                data-testid="button-admin-submit"
               >
-                <i className="fas fa-user mr-2"></i>
-                User Dashboard
-              </TabsTrigger>
-              {isAdminUnlocked && (
-                <TabsTrigger 
-                  value="admin" 
-                  className="py-4 px-1 border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary text-muted-foreground hover:text-foreground font-medium text-sm focus:outline-none transition-colors duration-200 bg-transparent rounded-none"
-                  data-testid="tab-admin"
-                >
-                  <i className="fas fa-shield-alt mr-2"></i>
-                  Admin Panel
-                </TabsTrigger>
-              )}
-            </TabsList>
-
-            {/* Main Content */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <TabsContent value="user" className="mt-0">
-                <UserTab />
-              </TabsContent>
-              
-              <TabsContent value="admin" className="mt-0">
-                <AdminTab 
-                  isUnlocked={isAdminUnlocked} 
-                  onUnlock={() => {
-                    setIsAdminUnlocked(true);
-                    setActiveTab("admin");
-                  }} 
-                />
-              </TabsContent>
-            </main>
-          </Tabs>
+                Enter
+              </Button>
+            </div>
+          )}
         </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        {currentView === "user" && <UserTab />}
+        {currentView === "admin" && isAdminUnlocked && (
+          <div>
+            <div className="mb-6">
+              <Button
+                onClick={handleBackToUser}
+                variant="outline"
+                className="mb-4"
+                data-testid="button-back-to-user"
+              >
+                ← Back to User Tab
+              </Button>
+            </div>
+            <AdminTab 
+              isUnlocked={isAdminUnlocked} 
+              onUnlock={() => {
+                setIsAdminUnlocked(true);
+                setCurrentView("admin");
+              }} 
+            />
+          </div>
+        )}
       </div>
     </div>
   );

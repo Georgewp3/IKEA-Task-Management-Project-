@@ -14,6 +14,8 @@ export const taskLogs = pgTable("task_logs", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   user: text("user").notNull(),
   task: text("task").notNull(),
+  status: text("status").notNull().default("COMPLETED"),
+  comment: text("comment"),
   timestamp: timestamp("timestamp").notNull().defaultNow(),
 });
 
@@ -26,6 +28,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export const insertTaskLogSchema = createInsertSchema(taskLogs).pick({
   user: true,
   task: true,
+  status: true,
+  comment: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
