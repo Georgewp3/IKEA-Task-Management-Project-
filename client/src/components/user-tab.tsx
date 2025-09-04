@@ -182,8 +182,8 @@ export default function UserTab() {
             style={{ 
               background: !selectedUser || !selectedTask || !selectedStatus 
                 ? 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)' 
-                : 'linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%)',
-              color: '#ffffff',
+                : 'linear-gradient(135deg, #0a1622 0%, #1e293b 50%, #0f172a 100%)',
+              color: '#ffd600',
               borderColor: '#fbbf24',
               minWidth: '280px',
               minHeight: '80px'
@@ -192,7 +192,7 @@ export default function UserTab() {
           >
             {submitTaskMutation.isPending ? (
               <>
-                <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-4"></div>
+                <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-yellow-400 mr-4"></div>
                 <span className="text-2xl">SUBMITTING...</span>
               </>
             ) : (
