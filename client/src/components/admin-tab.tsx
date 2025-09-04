@@ -101,6 +101,27 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
     },
   });
 
+  // Clear all task logs mutation
+  const clearLogsMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("DELETE", "/api/logs");
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "All task logs cleared successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/logs"] });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to clear task logs. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleUnlockAdmin = () => {
     if (adminCode === "332133") {
       onUnlock();
@@ -329,13 +350,15 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
             <h3 className="text-xl font-bold" style={{ color: '#0a1622' }}>Data Bank — Task Logs</h3>
             <div className="space-x-2">
               <Button 
+                onClick={() => clearLogsMutation.mutate()}
+                disabled={clearLogsMutation.isPending}
                 className="px-4 py-2 text-white border-none rounded font-bold cursor-pointer transition-colors duration-200"
                 style={{ background: '#c0392b' }}
                 onMouseEnter={(e) => e.currentTarget.style.background = '#a93226'}
                 onMouseLeave={(e) => e.currentTarget.style.background = '#c0392b'}
                 data-testid="button-clear-databank"
               >
-                🗑 Clear Data Bank
+                🗑 {clearLogsMutation.isPending ? "Clearing..." : "Clear Data Bank"}
               </Button>
               <Button 
                 className="px-4 py-2 text-white border-none rounded font-bold cursor-pointer transition-colors duration-200"

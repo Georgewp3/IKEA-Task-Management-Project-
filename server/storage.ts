@@ -13,6 +13,7 @@ export interface IStorage {
   createTaskLog(log: InsertTaskLog): Promise<TaskLog>;
   getTaskLogs(): Promise<TaskLog[]>;
   getTaskLogsByUser(user: string): Promise<TaskLog[]>;
+  clearAllTaskLogs(): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -109,6 +110,10 @@ export class MemStorage implements IStorage {
     return Array.from(this.taskLogs.values())
       .filter(log => log.user === user)
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  }
+
+  async clearAllTaskLogs(): Promise<void> {
+    this.taskLogs.clear();
   }
 }
 
