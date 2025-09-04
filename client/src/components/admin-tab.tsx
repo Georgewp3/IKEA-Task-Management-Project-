@@ -192,6 +192,51 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
     setUserTasks(user?.tasks.join(", ") || "");
   };
 
+  const handleExportCSV = () => {
+    if (taskLogs.length === 0) {
+      toast({
+        title: "No Data",
+        description: "There are no task logs to export.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create CSV content
+    const headers = ["User", "Project", "Task", "Status", "Timestamp", "Comment"];
+    const csvContent = [
+      headers.join(","),
+      ...taskLogs.map(log => {
+        const user = users.find(u => u.name === log.user);
+        const row = [
+          `"${log.user}"`,
+          `"${user?.project || "Unknown"}"`,
+          `"${log.task}"`,
+          `"${log.status}"`,
+          `"${new Date(log.timestamp).toLocaleString()}"`,
+          `"${log.comment || ""}"`
+        ];
+        return row.join(",");
+      })
+    ].join("\n");
+
+    // Create and download the file
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `task_logs_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast({
+      title: "Success",
+      description: "CSV file has been downloaded successfully.",
+    });
+  };
+
   if (!isUnlocked) {
     return (
       <div className="max-w-md mx-auto">
@@ -363,6 +408,7 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
                 🗑 {clearLogsMutation.isPending ? "Clearing..." : "Clear Data Bank"}
               </Button>
               <Button 
+                onClick={handleExportCSV}
                 className="px-4 py-2 text-white border-none rounded font-bold cursor-pointer transition-colors duration-200"
                 style={{ background: '#1a73e8' }}
                 onMouseEnter={(e) => e.currentTarget.style.background = '#0f5bb5'}
