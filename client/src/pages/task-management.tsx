@@ -33,36 +33,39 @@ export default function TaskManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100">
+    <div className="min-h-screen" style={{ background: '#aaa' }}>
       {/* Admin Login Button (Top Right) */}
       <div className="fixed top-4 right-4 z-50">
         <div className="relative">
           <Button
             onClick={() => setShowAdminPrompt(!showAdminPrompt)}
-            variant="outline"
-            size="sm"
-            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-none shadow-lg hover:from-purple-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-200"
+            className="px-5 py-3 text-white border-none rounded-lg shadow-lg transition-colors duration-300"
+            style={{ background: '#2c3e50' }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#1a252f'}
+            onMouseLeave={(e) => e.currentTarget.style.background = '#2c3e50'}
             data-testid="button-admin-login-toggle"
           >
             🔒 Admin Login
           </Button>
           
           {showAdminPrompt && (
-            <div className="absolute right-0 top-full mt-2 bg-gradient-to-br from-white to-gray-50 border border-purple-200 rounded-lg shadow-xl p-4 min-w-[220px]">
+            <div className="absolute right-0 top-full mt-4 bg-white border border-gray-300 rounded-md shadow-lg p-3" style={{ minWidth: '200px' }}>
               <Input
                 type="password"
-                placeholder="Enter 6-digit code"
+                placeholder="Enter admin code"
                 maxLength={6}
                 value={adminCode}
                 onChange={(e) => setAdminCode(e.target.value)}
-                className="mb-3 border-purple-200 focus:border-purple-400"
+                className="mb-2 p-2 w-full border border-gray-300 rounded-md text-center"
                 data-testid="input-admin-code"
                 onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
               />
               <Button
                 onClick={handleAdminLogin}
-                size="sm"
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-none"
+                className="w-full p-2 text-white border-none rounded-md cursor-pointer transition-colors duration-300"
+                style={{ background: '#2980b9' }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#1f6391'}
+                onMouseLeave={(e) => e.currentTarget.style.background = '#2980b9'}
                 data-testid="button-admin-submit"
               >
                 Enter
