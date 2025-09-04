@@ -65,47 +65,64 @@ export default function UserTab() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-8 uppercase" style={{ color: '#0a1622' }}>User Entries</h1>
+    <div className="max-w-5xl mx-auto px-6">
+      {/* Header */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+          Task Submission Dashboard
+        </h1>
+        <p className="text-slate-600 text-lg">Complete your tasks efficiently with our step-by-step workflow</p>
+      </div>
       
-      <div className="entry-grid grid grid-cols-2 gap-4 items-center mb-8 max-w-4xl mx-auto px-4">
-        {/* STEP 1 */}
-        <div className="step-label text-center py-2 font-bold" style={{ background: '#0a1622', color: '#ffd600' }}>STEP 1</div>
-        <div className="step-action py-2 font-bold" style={{ background: '#0a1622', color: '#ffd600' }}>SELECT USER →</div>
-        
-        <div className="step-input col-span-2">
-          <Select value={selectedUser} onValueChange={setSelectedUser} disabled={usersLoading}>
-            <SelectTrigger data-testid="select-user" className="w-full font-bold border border-black" style={{ background: '#a8e063', padding: '0.6rem 0.75rem' }}>
-              <SelectValue placeholder="— choose user —" />
-            </SelectTrigger>
-            <SelectContent>
-              {users.map((user) => (
-                <SelectItem key={user.id} value={user.name}>
-                  {user.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Steps Container */}
+      <div className="grid gap-8 mb-10">
+        {/* STEP 1 - User Selection */}
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8 transition-all duration-300 hover:shadow-xl">
+          <div className="flex items-center mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+              1
+            </div>
+            <h3 className="text-2xl font-semibold text-slate-800">Select User</h3>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6 items-center">
+            <div>
+              <Select value={selectedUser} onValueChange={setSelectedUser} disabled={usersLoading}>
+                <SelectTrigger data-testid="select-user" className="h-14 text-lg font-medium border-2 border-slate-300 hover:border-blue-400 transition-colors rounded-xl bg-gradient-to-r from-blue-50 to-blue-100">
+                  <SelectValue placeholder="Choose a user..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {users.map((user) => (
+                    <SelectItem key={user.id} value={user.name} className="text-lg py-3">
+                      {user.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl p-6">
+              <label className="block text-sm font-medium text-slate-600 mb-2">ASSIGNED PROJECT</label>
+              <div className="text-xl font-bold text-slate-800" data-testid="text-user-project">
+                {selectedUserData?.project || "No project assigned"}
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* PROJECT display */}
-        <div className="project-label text-center py-2 font-bold" style={{ background: '#0a1622', color: '#ffd600' }}>PROJECT</div>
-        <div className="project-name py-2 px-4 font-bold text-center text-white border border-black mb-4" style={{ background: 'red' }} data-testid="text-user-project">
-          {selectedUserData?.project || "---"}
-        </div>
-
-        {/* STEP 2 */}
-        <div className="step-label text-center py-2 font-bold" style={{ background: '#0a1622', color: '#ffd600' }}>STEP 2</div>
-        <div className="step-action py-2 font-bold" style={{ background: '#0a1622', color: '#ffd600' }}>SELECT TASK →</div>
-        
-        <div className="step-input col-span-2">
+        {/* STEP 2 - Task Selection */}
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8 transition-all duration-300 hover:shadow-xl">
+          <div className="flex items-center mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+              2
+            </div>
+            <h3 className="text-2xl font-semibold text-slate-800">Select Task</h3>
+          </div>
           <Select value={selectedTask} onValueChange={setSelectedTask} disabled={!selectedUser}>
-            <SelectTrigger data-testid="select-task" className="w-full font-bold border border-black" style={{ background: '#a8e063', padding: '0.6rem 0.75rem' }}>
-              <SelectValue placeholder="— choose task —" />
+            <SelectTrigger data-testid="select-task" className="h-14 text-lg font-medium border-2 border-slate-300 hover:border-green-400 transition-colors rounded-xl bg-gradient-to-r from-green-50 to-green-100">
+              <SelectValue placeholder={!selectedUser ? "Select a user first..." : "Choose a task..."} />
             </SelectTrigger>
             <SelectContent>
               {selectedUserData?.tasks.map((task) => (
-                <SelectItem key={task} value={task}>
+                <SelectItem key={task} value={task} className="text-lg py-3">
                   {task}
                 </SelectItem>
               ))}
@@ -113,49 +130,71 @@ export default function UserTab() {
           </Select>
         </div>
 
-        {/* STEP 3 */}
-        <div className="step-label text-center py-2 font-bold" style={{ background: '#0a1622', color: '#ffd600' }}>STEP 3</div>
-        <div className="step-action py-2 font-bold" style={{ background: '#0a1622', color: '#ffd600' }}>TASK STATUS →</div>
-        
-        <div className="step-input col-span-2">
+        {/* STEP 3 - Status Selection */}
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8 transition-all duration-300 hover:shadow-xl">
+          <div className="flex items-center mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+              3
+            </div>
+            <h3 className="text-2xl font-semibold text-slate-800">Task Status</h3>
+          </div>
           <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-            <SelectTrigger data-testid="select-status" className="w-full font-bold border border-black" style={{ background: '#a8e063', padding: '0.6rem 0.75rem' }}>
-              <SelectValue placeholder="— choose status —" />
+            <SelectTrigger data-testid="select-status" className="h-14 text-lg font-medium border-2 border-slate-300 hover:border-orange-400 transition-colors rounded-xl bg-gradient-to-r from-orange-50 to-orange-100">
+              <SelectValue placeholder="Choose completion status..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="NOT COMPLETED">NOT COMPLETED</SelectItem>
-              <SelectItem value="COMPLETED">COMPLETED</SelectItem>
+              <SelectItem value="COMPLETED" className="text-lg py-3">
+                ✅ COMPLETED
+              </SelectItem>
+              <SelectItem value="NOT COMPLETED" className="text-lg py-3">
+                ⏳ NOT COMPLETED
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* STEP 4 */}
-        <div className="step-label text-center py-2 font-bold" style={{ background: '#0a1622', color: '#ffd600' }}>STEP 4</div>
-        <div className="step-action py-2 font-bold" style={{ background: '#0a1622', color: '#ffd600' }}>OPTIONAL COMMENT →</div>
-        
-        <div className="step-input col-span-2">
+        {/* STEP 4 - Optional Comment */}
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8 transition-all duration-300 hover:shadow-xl">
+          <div className="flex items-center mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+              4
+            </div>
+            <h3 className="text-2xl font-semibold text-slate-800">Add Comment</h3>
+            <span className="ml-3 px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-sm font-medium">Optional</span>
+          </div>
           <Textarea
-            placeholder=""
+            placeholder="Add any notes, observations, or details about your task completion..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            className="w-full h-10 p-2 border border-gray-300 rounded bg-white resize-none font-inherit"
-            style={{ fontSize: '1rem' }}
+            className="w-full h-24 p-4 text-lg border-2 border-slate-300 hover:border-purple-400 focus:border-purple-500 rounded-xl bg-gradient-to-r from-purple-50 to-purple-100 resize-none transition-colors"
             data-testid="textarea-comment"
           />
         </div>
       </div>
 
-      <div className="submit-wrapper flex justify-center mt-8 mb-12">
+      {/* Submit Button */}
+      <div className="flex justify-center mb-16">
         <Button 
           onClick={handleSubmitEntry}
           disabled={!selectedUser || !selectedTask || !selectedStatus || submitTaskMutation.isPending}
-          className="px-8 py-4 text-lg font-bold border-none rounded-lg cursor-pointer transition-colors duration-200"
-          style={{ background: '#0a1622', color: '#ffd600' }}
-          onMouseEnter={(e) => e.currentTarget.style.background = '#142f4e'}
-          onMouseLeave={(e) => e.currentTarget.style.background = '#0a1622'}
+          className="px-12 py-6 text-xl font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 shadow-lg hover:shadow-xl"
+          style={{ 
+            background: !selectedUser || !selectedTask || !selectedStatus ? '#94a3b8' : 'linear-gradient(135deg, #0a1622 0%, #1e293b 100%)',
+            color: '#ffd600',
+            border: 'none'
+          }}
           data-testid="button-submit-entry"
         >
-          {submitTaskMutation.isPending ? "SUBMITTING..." : "SUBMIT ENTRY"}
+          {submitTaskMutation.isPending ? (
+            <>
+              <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-400 mr-3"></div>
+              SUBMITTING...
+            </>
+          ) : (
+            <>
+              🚀 SUBMIT ENTRY
+            </>
+          )}
         </Button>
       </div>
     </div>
