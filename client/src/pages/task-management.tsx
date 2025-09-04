@@ -83,8 +83,8 @@ export default function TaskManagement() {
             <div className="mb-6">
               <Button
                 onClick={handleBackToUser}
-                variant="outline"
-                className="mb-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white border-none hover:from-blue-600 hover:to-purple-600 transform hover:scale-105 transition-all duration-200"
+                className="mb-4 px-4 py-2 font-bold border-none rounded cursor-pointer"
+                style={{ background: '#0a1622', color: '#ffd600' }}
                 data-testid="button-back-to-user"
               >
                 ← Back to User Tab

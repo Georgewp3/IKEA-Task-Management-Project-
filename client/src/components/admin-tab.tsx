@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -21,6 +20,8 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
   const [newUserProject, setNewUserProject] = useState("");
   const [selectedTaskUser, setSelectedTaskUser] = useState("");
   const [userTasks, setUserTasks] = useState("");
+  const [deleteMode, setDeleteMode] = useState(false);
+  const [selectedUsersToDelete, setSelectedUsersToDelete] = useState<string[]>([]);
   const { toast } = useToast();
 
   // Fetch users
@@ -171,235 +172,200 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
   if (!isUnlocked) {
     return (
       <div className="max-w-md mx-auto">
-        <Card data-testid="card-admin-unlock" className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-100 shadow-xl">
-          <CardContent className="pt-6 text-center">
-            <div className="mb-4">
-              <i className="fas fa-lock text-4xl text-purple-500"></i>
-            </div>
-            <h2 className="text-xl font-bold text-purple-800 mb-2">Admin Access Required</h2>
-            <p className="text-sm text-purple-600 mb-6">Enter the admin code to access the management panel</p>
-            
-            <div className="space-y-4">
-              <Input 
-                type="password"
-                placeholder="Enter admin code"
-                value={adminCode}
-                onChange={(e) => setAdminCode(e.target.value)}
-                className="text-center border-purple-300 focus:border-purple-500"
-                data-testid="input-admin-code"
-                onKeyDown={(e) => e.key === "Enter" && handleUnlockAdmin()}
-              />
-              <Button 
-                onClick={handleUnlockAdmin}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-none transform hover:scale-105 transition-all duration-200"
-                data-testid="button-unlock-admin"
-              >
-                <i className="fas fa-unlock mr-2"></i>
-                Unlock Admin Panel
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="border border-gray-300 rounded-lg shadow-xl p-6 text-center" style={{ background: '#f8f8f8' }} data-testid="card-admin-unlock">
+          <div className="mb-4">
+            <i className="fas fa-lock text-4xl" style={{ color: '#0a1622' }}></i>
+          </div>
+          <h2 className="text-xl font-bold mb-2" style={{ color: '#0a1622' }}>Admin Access Required</h2>
+          <p className="text-sm mb-6 text-gray-600">Enter the admin code to access the management panel</p>
+          
+          <div className="space-y-4">
+            <Input 
+              type="password"
+              placeholder="Enter admin code"
+              value={adminCode}
+              onChange={(e) => setAdminCode(e.target.value)}
+              className="text-center border border-gray-300 rounded"
+              data-testid="input-admin-code"
+              onKeyDown={(e) => e.key === "Enter" && handleUnlockAdmin()}
+            />
+            <Button 
+              onClick={handleUnlockAdmin}
+              className="w-full px-4 py-2 font-bold border-none rounded cursor-pointer transition-colors duration-200"
+              style={{ background: '#2980b9', color: 'white' }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#1f6391'}
+              onMouseLeave={(e) => e.currentTarget.style.background = '#2980b9'}
+              data-testid="button-unlock-admin"
+            >
+              <i className="fas fa-unlock mr-2"></i>
+              Unlock Admin Panel
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* User Management */}
-        <div className="space-y-6">
-          <Card data-testid="card-user-management" className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-100">
-            <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-t-lg">
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <i className="fas fa-users text-white mr-3 text-xl"></i>
-                  Manage Users
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Add User Form */}
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input 
-                    placeholder="User name"
-                    value={newUserName}
-                    onChange={(e) => setNewUserName(e.target.value)}
-                    data-testid="input-new-user-name"
-                  />
-                  <Input 
-                    placeholder="Project name"
-                    value={newUserProject}
-                    onChange={(e) => setNewUserProject(e.target.value)}
-                    data-testid="input-new-user-project"
-                  />
-                </div>
-                <Button 
-                  onClick={handleAddUser}
-                  disabled={addUserMutation.isPending}
-                  className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white border-none transform hover:scale-105 transition-all duration-200"
-                  data-testid="button-add-user"
-                >
-                  <i className="fas fa-plus mr-2"></i>
-                  {addUserMutation.isPending ? "Adding..." : "Add User"}
-                </Button>
-              </div>
-              
-              {/* Users List */}
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium text-muted-foreground mb-3">Current Users</h3>
-                {users.length === 0 ? (
-                  <div className="text-center py-4 text-muted-foreground">
-                    No users found
-                  </div>
-                ) : (
-                  users.map((user) => (
-                    <div key={user.id} className="flex items-center justify-between p-3 bg-muted rounded-md" data-testid={`row-user-${user.id}`}>
-                      <div>
-                        <div className="font-medium text-foreground">{user.name}</div>
-                        <div className="text-sm text-muted-foreground">{user.project}</div>
-                      </div>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive/80">
-                            <i className="fas fa-trash"></i>
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete User</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete {user.name}? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction 
-                              onClick={() => deleteUserMutation.mutate(user.name)}
-                              data-testid={`button-delete-user-${user.id}`}
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
+    <div className="max-w-4xl mx-auto p-4 border border-gray-300 rounded-lg" style={{ background: '#f8f8f8' }}>
+      <h2 className="text-3xl font-bold text-center mb-2" style={{ color: '#0a1622' }}>Admin Panel — Assign Tasks</h2>
+      <p className="text-center text-gray-600 mb-6 text-sm">Assign tasks to each user using comma-separated values.</p>
+      
+      <div className="space-y-8">
+        {/* Add User Section */}
+        <div className="add-user-row flex flex-wrap gap-4 mb-6">
+          <Input 
+            placeholder="Enter full name"
+            value={newUserName}
+            onChange={(e) => setNewUserName(e.target.value)}
+            className="flex-1 p-2 border border-gray-300 rounded"
+            data-testid="input-new-user-name"
+          />
+          <Input 
+            placeholder="Enter project name"
+            value={newUserProject}
+            onChange={(e) => setNewUserProject(e.target.value)}
+            className="flex-1 p-2 border border-gray-300 rounded"
+            data-testid="input-new-user-project"
+          />
+          <Button 
+            onClick={handleAddUser}
+            disabled={addUserMutation.isPending}
+            className="px-4 py-2 text-white border-none rounded font-bold cursor-pointer transition-colors duration-200"
+            style={{ background: '#27ae60' }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#219150'}
+            onMouseLeave={(e) => e.currentTarget.style.background = '#27ae60'}
+            data-testid="button-add-user"
+          >
+            ➕ {addUserMutation.isPending ? "Adding..." : "Add User"}
+          </Button>
+          <Button 
+            onClick={() => setDeleteMode(!deleteMode)}
+            className="px-4 py-2 text-white border-none rounded font-bold cursor-pointer transition-colors duration-200"
+            style={{ background: '#c0392b' }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#a93226'}
+            onMouseLeave={(e) => e.currentTarget.style.background = '#c0392b'}
+            data-testid="button-toggle-delete-mode"
+          >
+            🗑 Delete Users
+          </Button>
         </div>
 
-        {/* Task Management */}
-        <div className="space-y-6">
-          <Card data-testid="card-task-management" className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-100">
-            <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-t-lg">
-              <CardTitle className="flex items-center">
-                <i className="fas fa-tasks text-white mr-3 text-xl"></i>
-                Manage Tasks
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Select value={selectedTaskUser} onValueChange={handleUserTaskSelection}>
-                <SelectTrigger data-testid="select-task-user">
-                  <SelectValue placeholder="Select user to manage tasks..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {users.map((user) => (
-                    <SelectItem key={user.id} value={user.name}>
-                      {user.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Textarea 
-                placeholder="Enter tasks (comma-separated)"
-                value={userTasks}
-                onChange={(e) => setUserTasks(e.target.value)}
-                rows={4}
-                className="resize-none"
-                data-testid="textarea-user-tasks"
+        {/* Delete Controls */}
+        {deleteMode && (
+          <div className="mb-4">
+            <Button 
+              onClick={() => {
+                selectedUsersToDelete.forEach(userName => {
+                  deleteUserMutation.mutate(userName);
+                });
+                setSelectedUsersToDelete([]);
+                setDeleteMode(false);
+              }}
+              className="px-5 py-2 text-white border-none rounded font-bold cursor-pointer transition-colors duration-200"
+              style={{ background: '#e67e22' }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#d35400'}
+              onMouseLeave={(e) => e.currentTarget.style.background = '#e67e22'}
+              data-testid="button-confirm-delete"
+            >
+              ✔ Confirm Delete
+            </Button>
+          </div>
+        )}
+
+        {/* User Management Tasks */}
+        <div className="space-y-4">
+          {users.map((user) => (
+            <div key={user.id} className="admin-task-row flex items-center justify-between gap-4 p-3 bg-white border border-gray-300 rounded shadow-sm" data-testid={`row-user-${user.id}`}>
+              {deleteMode && (
+                <input
+                  type="checkbox"
+                  className="admin-task-checkbox mr-2"
+                  checked={selectedUsersToDelete.includes(user.name)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedUsersToDelete([...selectedUsersToDelete, user.name]);
+                    } else {
+                      setSelectedUsersToDelete(selectedUsersToDelete.filter(name => name !== user.name));
+                    }
+                  }}
+                />
+              )}
+              <div className="flex-1">
+                <div className="font-bold text-gray-800">{user.name}</div>
+                <div className="text-sm text-gray-600">{user.project}</div>
+              </div>
+              <Input
+                placeholder="Tasks (comma-separated)"
+                value={user.tasks.join(", ")}
+                onChange={(e) => {
+                  const tasks = e.target.value.split(",").map(task => task.trim()).filter(task => task.length > 0);
+                  updateTasksMutation.mutate({ user: user.name, tasks });
+                }}
+                className="flex-1 p-2 border border-gray-300 rounded bg-gray-50"
+                style={{ backgroundColor: '#f0f0f0' }}
               />
-              
-              <div className="flex space-x-2">
-                <Button 
-                  onClick={handleSaveTasks}
-                  disabled={updateTasksMutation.isPending}
-                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-none transform hover:scale-105 transition-all duration-200"
-                  data-testid="button-save-tasks"
-                >
-                  <i className="fas fa-save mr-2"></i>
-                  {updateTasksMutation.isPending ? "Saving..." : "Save Tasks"}
-                </Button>
-                <Button 
-                  onClick={handleClearTasks}
-                  disabled={updateTasksMutation.isPending}
-                  className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-none transform hover:scale-105 transition-all duration-200"
-                  data-testid="button-clear-tasks"
-                >
-                  <i className="fas fa-eraser mr-2"></i>
-                  Clear Tasks
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          ))}
         </div>
-      </div>
 
-      {/* Task Logs */}
-      <Card data-testid="card-task-logs" className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-100">
-        <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-t-lg">
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center">
-              <i className="fas fa-clipboard-list text-white mr-3 text-xl"></i>
-              Task Logs
+        {/* Task Logs */}
+        <div className="mt-8">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold" style={{ color: '#0a1622' }}>Data Bank — Task Logs</h3>
+            <div className="space-x-2">
+              <Button 
+                className="px-4 py-2 text-white border-none rounded font-bold cursor-pointer transition-colors duration-200"
+                style={{ background: '#c0392b' }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#a93226'}
+                onMouseLeave={(e) => e.currentTarget.style.background = '#c0392b'}
+                data-testid="button-clear-databank"
+              >
+                🗑 Clear Data Bank
+              </Button>
+              <Button 
+                className="px-4 py-2 text-white border-none rounded font-bold cursor-pointer transition-colors duration-200"
+                style={{ background: '#1a73e8' }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#0f5bb5'}
+                onMouseLeave={(e) => e.currentTarget.style.background = '#1a73e8'}
+                data-testid="button-export-csv"
+              >
+                📤 Export to Excel
+              </Button>
             </div>
-            <div className="text-sm text-muted-foreground">
-              <span data-testid="text-total-submissions">{taskLogs.length}</span> total submissions
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </div>
+          <p className="text-center text-gray-600 mb-4 text-sm">This table contains all task submissions by users.</p>
+          
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full border-collapse" data-testid="table-task-logs">
               <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">User</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Task</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Timestamp</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Project</th>
+                <tr>
+                  <th className="p-3 border border-gray-300 text-left font-bold text-white" style={{ background: '#0a1622', color: '#ffd600' }}>User</th>
+                  <th className="p-3 border border-gray-300 text-left font-bold text-white" style={{ background: '#0a1622', color: '#ffd600' }}>Project</th>
+                  <th className="p-3 border border-gray-300 text-left font-bold text-white" style={{ background: '#0a1622', color: '#ffd600' }}>Task</th>
+                  <th className="p-3 border border-gray-300 text-left font-bold text-white" style={{ background: '#0a1622', color: '#ffd600' }}>Status</th>
+                  <th className="p-3 border border-gray-300 text-left font-bold text-white" style={{ background: '#0a1622', color: '#ffd600' }}>Timestamp</th>
+                  <th className="p-3 border border-gray-300 text-left font-bold text-white" style={{ background: '#0a1622', color: '#ffd600' }}>Comment</th>
                 </tr>
               </thead>
               <tbody>
                 {taskLogs.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="py-8 px-4 text-center text-muted-foreground">
+                    <td colSpan={6} className="py-8 px-4 text-center text-gray-500 border border-gray-300">
                       No task logs found
                     </td>
                   </tr>
                 ) : (
                   taskLogs.map((log) => {
                     const user = users.find(u => u.name === log.user);
-                    const initials = log.user.split(' ').map(n => n[0]).join('').toUpperCase();
-                    
                     return (
-                      <tr key={log.id} className="border-b border-border hover:bg-muted/50" data-testid={`row-task-log-${log.id}`}>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium mr-3">
-                              {initials}
-                            </div>
-                            <span className="font-medium text-foreground">{log.user}</span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 text-foreground">{log.task}</td>
-                        <td className="py-3 px-4 text-muted-foreground">
-                          {new Date(log.timestamp).toLocaleString()}
-                        </td>
-                        <td className="py-3 px-4 text-muted-foreground">{user?.project || "Unknown"}</td>
+                      <tr key={log.id} data-testid={`row-task-log-${log.id}`}>
+                        <td className="p-3 border border-gray-300">{log.user}</td>
+                        <td className="p-3 border border-gray-300">{user?.project || "Unknown"}</td>
+                        <td className="p-3 border border-gray-300">{log.task}</td>
+                        <td className="p-3 border border-gray-300">{log.status}</td>
+                        <td className="p-3 border border-gray-300">{new Date(log.timestamp).toLocaleString()}</td>
+                        <td className="p-3 border border-gray-300">{log.comment || ""}</td>
                       </tr>
                     );
                   })
@@ -407,8 +373,8 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
