@@ -3,6 +3,8 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import type { User, TaskLog } from "@shared/schema";
@@ -10,6 +12,8 @@ import type { User, TaskLog } from "@shared/schema";
 export default function UserTab() {
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedTask, setSelectedTask] = useState("");
+  const [notCompletedReason, setNotCompletedReason] = useState("");
+  const [isNotCompletedDialogOpen, setIsNotCompletedDialogOpen] = useState(false);
   const { toast } = useToast();
 
   // Fetch all users
@@ -49,6 +53,31 @@ export default function UserTab() {
     },
   });
 
+  // Submit task not completed mutation
+  const submitNotCompletedMutation = useMutation({
+    mutationFn: async ({ user, task, reason }: { user: string; task: string; reason?: string }) => {
+      const taskName = reason ? `${task} - Not Completed: ${reason}` : `${task} - Not Completed`;
+      return apiRequest("POST", "/api/logs", { user, task: taskName });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Task Not Completed Reported",
+        description: "Your report has been logged successfully.",
+      });
+      setSelectedTask("");
+      setNotCompletedReason("");
+      setIsNotCompletedDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["/api/logs"] });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to report incomplete task. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSubmitTask = () => {
     if (!selectedUser || !selectedTask) {
       toast({
@@ -60,6 +89,23 @@ export default function UserTab() {
     }
 
     submitTaskMutation.mutate({ user: selectedUser, task: selectedTask });
+  };
+
+  const handleSubmitNotCompleted = () => {
+    if (!selectedUser || !selectedTask) {
+      toast({
+        title: "Validation Error",
+        description: "Please select both a user and a task.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    submitNotCompletedMutation.mutate({ 
+      user: selectedUser, 
+      task: selectedTask, 
+      reason: notCompletedReason.trim() || undefined 
+    });
   };
 
   return (
@@ -134,15 +180,74 @@ export default function UserTab() {
               </Select>
             </div>
             
-            <Button 
-              onClick={handleSubmitTask}
-              disabled={!selectedUser || !selectedTask || submitTaskMutation.isPending}
-              className="w-full"
-              data-testid="button-submit-task"
-            >
-              <i className="fas fa-check mr-2"></i>
-              {submitTaskMutation.isPending ? "Submitting..." : "Submit Task"}
-            </Button>
+            <div className="space-y-3">
+              <Button 
+                onClick={handleSubmitTask}
+                disabled={!selectedUser || !selectedTask || submitTaskMutation.isPending}
+                className="w-full"
+                data-testid="button-submit-task"
+              >
+                <i className="fas fa-check mr-2"></i>
+                {submitTaskMutation.isPending ? "Submitting..." : "Submit Task"}
+              </Button>
+
+              <Dialog open={isNotCompletedDialogOpen} onOpenChange={setIsNotCompletedDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    variant="outline"
+                    disabled={!selectedUser || !selectedTask}
+                    className="w-full text-orange-600 border-orange-200 hover:bg-orange-50"
+                    data-testid="button-task-not-completed"
+                  >
+                    <i className="fas fa-exclamation-triangle mr-2"></i>
+                    Task Not Completed
+                  </Button>
+                </DialogTrigger>
+                <DialogContent data-testid="dialog-not-completed">
+                  <DialogHeader>
+                    <DialogTitle>Report Task Not Completed</DialogTitle>
+                    <DialogDescription>
+                      Report that you couldn't complete the task "{selectedTask}". You can optionally provide a reason.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-2">
+                        Reason (Optional)
+                      </label>
+                      <Textarea
+                        placeholder="Why couldn't you complete this task? (optional)"
+                        value={notCompletedReason}
+                        onChange={(e) => setNotCompletedReason(e.target.value)}
+                        rows={3}
+                        className="resize-none"
+                        data-testid="textarea-not-completed-reason"
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        setIsNotCompletedDialogOpen(false);
+                        setNotCompletedReason("");
+                      }}
+                      data-testid="button-cancel-not-completed"
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      onClick={handleSubmitNotCompleted}
+                      disabled={submitNotCompletedMutation.isPending}
+                      data-testid="button-submit-not-completed"
+                    >
+                      <i className="fas fa-exclamation-triangle mr-2"></i>
+                      {submitNotCompletedMutation.isPending ? "Reporting..." : "Report Not Completed"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
           </CardContent>
         </Card>
       </div>
