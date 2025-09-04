@@ -295,16 +295,30 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
                 <div className="font-bold text-gray-800">{user.name}</div>
                 <div className="text-sm text-gray-600">{user.project}</div>
               </div>
-              <Input
-                placeholder="Tasks (comma-separated)"
-                value={user.tasks.join(", ")}
-                onChange={(e) => {
-                  const tasks = e.target.value.split(",").map(task => task.trim()).filter(task => task.length > 0);
-                  updateTasksMutation.mutate({ user: user.name, tasks });
-                }}
-                className="flex-1 p-2 border border-gray-300 rounded bg-gray-50"
-                style={{ backgroundColor: '#f0f0f0' }}
-              />
+              <div className="flex-1 flex gap-2">
+                <Input
+                  placeholder="Tasks (comma-separated)"
+                  value={selectedTaskUser === user.name ? userTasks : user.tasks.join(", ")}
+                  onChange={(e) => {
+                    setSelectedTaskUser(user.name);
+                    setUserTasks(e.target.value);
+                  }}
+                  className="flex-1 p-2 border border-gray-300 rounded bg-gray-50"
+                  style={{ backgroundColor: '#f0f0f0' }}
+                  data-testid={`input-tasks-${user.id}`}
+                />
+                <Button
+                  onClick={() => handleSaveTasks()}
+                  disabled={updateTasksMutation.isPending || selectedTaskUser !== user.name}
+                  className="px-3 py-2 text-white border-none rounded font-bold cursor-pointer transition-colors duration-200"
+                  style={{ background: '#27ae60' }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = '#219150'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = '#27ae60'}
+                  data-testid={`button-save-tasks-${user.id}`}
+                >
+                  {updateTasksMutation.isPending && selectedTaskUser === user.name ? "Saving..." : "Save"}
+                </Button>
+              </div>
             </div>
           ))}
         </div>
