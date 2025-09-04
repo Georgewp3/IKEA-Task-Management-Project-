@@ -120,9 +120,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // DELETE /api/logs → clear all task logs
   app.delete('/api/logs', async (req, res) => {
     try {
+      console.log('DELETE /api/logs endpoint hit');
       await storage.clearAllTaskLogs();
+      console.log('Task logs cleared from storage');
       res.json({ message: 'All task logs cleared successfully' });
     } catch (error) {
+      console.error('Error clearing task logs:', error);
       res.status(500).json({ message: 'Failed to clear task logs' });
     }
   });
