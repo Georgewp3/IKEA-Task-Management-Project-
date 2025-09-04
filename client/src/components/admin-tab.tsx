@@ -111,7 +111,9 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
         title: "Success",
         description: "All task logs cleared successfully.",
       });
+      // Force refresh the task logs data
       queryClient.invalidateQueries({ queryKey: ["/api/logs"] });
+      queryClient.refetchQueries({ queryKey: ["/api/logs"] });
     },
     onError: () => {
       toast({
