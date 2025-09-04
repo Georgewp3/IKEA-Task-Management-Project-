@@ -71,7 +71,7 @@ export default function UserTab() {
       <div className="entry-grid grid grid-cols-2 gap-6 items-center mb-12 max-w-4xl mx-auto px-6 bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-gray-100">
         {/* STEP 1 */}
         <div className="step-label text-center py-3 font-bold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105" style={{ background: '#0a1622', color: '#ffd600' }}>STEP 1</div>
-        <div className="step-action py-3 font-bold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105" style={{ background: '#0a1622', color: '#ffd600' }}>SELECT USER →</div>
+        <div className="step-action py-3 font-bold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105 text-center" style={{ background: '#0a1622', color: '#ffd600' }}>SELECT USER →</div>
         
         <div className="step-input col-span-2">
           <Select value={selectedUser} onValueChange={setSelectedUser} disabled={usersLoading}>
@@ -96,7 +96,7 @@ export default function UserTab() {
 
         {/* STEP 2 */}
         <div className="step-label text-center py-3 font-bold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105" style={{ background: '#0a1622', color: '#ffd600' }}>STEP 2</div>
-        <div className="step-action py-3 font-bold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105" style={{ background: '#0a1622', color: '#ffd600' }}>SELECT TASK →</div>
+        <div className="step-action py-3 font-bold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105 text-center" style={{ background: '#0a1622', color: '#ffd600' }}>SELECT TASK →</div>
         
         <div className="step-input col-span-2">
           <Select value={selectedTask} onValueChange={setSelectedTask} disabled={!selectedUser}>
@@ -115,7 +115,7 @@ export default function UserTab() {
 
         {/* STEP 3 */}
         <div className="step-label text-center py-3 font-bold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105" style={{ background: '#0a1622', color: '#ffd600' }}>STEP 3</div>
-        <div className="step-action py-3 font-bold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105" style={{ background: '#0a1622', color: '#ffd600' }}>TASK STATUS →</div>
+        <div className="step-action py-3 font-bold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105 text-center" style={{ background: '#0a1622', color: '#ffd600' }}>TASK STATUS →</div>
         
         <div className="step-input col-span-2">
           <Select value={selectedStatus} onValueChange={setSelectedStatus}>
@@ -131,7 +131,7 @@ export default function UserTab() {
 
         {/* STEP 4 */}
         <div className="step-label text-center py-3 font-bold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105" style={{ background: '#0a1622', color: '#ffd600' }}>STEP 4</div>
-        <div className="step-action py-3 font-bold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105" style={{ background: '#0a1622', color: '#ffd600' }}>OPTIONAL COMMENT →</div>
+        <div className="step-action py-3 font-bold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105 text-center" style={{ background: '#0a1622', color: '#ffd600' }}>OPTIONAL COMMENT →</div>
         
         <div className="step-input col-span-2">
           <Textarea
