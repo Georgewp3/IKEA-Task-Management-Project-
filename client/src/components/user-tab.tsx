@@ -174,28 +174,35 @@ export default function UserTab() {
 
       {/* Submit Button */}
       <div className="flex justify-center mb-16">
-        <Button 
-          onClick={handleSubmitEntry}
-          disabled={!selectedUser || !selectedTask || !selectedStatus || submitTaskMutation.isPending}
-          className="px-12 py-6 text-xl font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 shadow-lg hover:shadow-xl"
-          style={{ 
-            background: !selectedUser || !selectedTask || !selectedStatus ? '#94a3b8' : 'linear-gradient(135deg, #0a1622 0%, #1e293b 100%)',
-            color: '#ffd600',
-            border: 'none'
-          }}
-          data-testid="button-submit-entry"
-        >
-          {submitTaskMutation.isPending ? (
-            <>
-              <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-400 mr-3"></div>
-              SUBMITTING...
-            </>
-          ) : (
-            <>
-              🚀 SUBMIT ENTRY
-            </>
-          )}
-        </Button>
+        <div className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 p-1 rounded-3xl shadow-2xl">
+          <Button 
+            onClick={handleSubmitEntry}
+            disabled={!selectedUser || !selectedTask || !selectedStatus || submitTaskMutation.isPending}
+            className="px-16 py-8 text-2xl font-bold rounded-3xl transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 shadow-xl hover:shadow-2xl border-4 border-yellow-400"
+            style={{ 
+              background: !selectedUser || !selectedTask || !selectedStatus 
+                ? 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)' 
+                : 'linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%)',
+              color: '#ffffff',
+              borderColor: '#fbbf24',
+              minWidth: '280px',
+              minHeight: '80px'
+            }}
+            data-testid="button-submit-entry"
+          >
+            {submitTaskMutation.isPending ? (
+              <>
+                <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-4"></div>
+                <span className="text-2xl">SUBMITTING...</span>
+              </>
+            ) : (
+              <>
+                <span className="text-3xl mr-3">🚀</span>
+                <span className="text-2xl tracking-wide">SUBMIT ENTRY</span>
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
