@@ -171,13 +171,13 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
   if (!isUnlocked) {
     return (
       <div className="max-w-md mx-auto">
-        <Card data-testid="card-admin-unlock">
+        <Card data-testid="card-admin-unlock" className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-100 shadow-xl">
           <CardContent className="pt-6 text-center">
             <div className="mb-4">
-              <i className="fas fa-lock text-4xl text-muted-foreground"></i>
+              <i className="fas fa-lock text-4xl text-purple-500"></i>
             </div>
-            <h2 className="text-xl font-semibold text-foreground mb-2">Admin Access Required</h2>
-            <p className="text-sm text-muted-foreground mb-6">Enter the admin code to access the management panel</p>
+            <h2 className="text-xl font-bold text-purple-800 mb-2">Admin Access Required</h2>
+            <p className="text-sm text-purple-600 mb-6">Enter the admin code to access the management panel</p>
             
             <div className="space-y-4">
               <Input 
@@ -185,13 +185,13 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
                 placeholder="Enter admin code"
                 value={adminCode}
                 onChange={(e) => setAdminCode(e.target.value)}
-                className="text-center"
+                className="text-center border-purple-300 focus:border-purple-500"
                 data-testid="input-admin-code"
                 onKeyDown={(e) => e.key === "Enter" && handleUnlockAdmin()}
               />
               <Button 
                 onClick={handleUnlockAdmin}
-                className="w-full"
+                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-none transform hover:scale-105 transition-all duration-200"
                 data-testid="button-unlock-admin"
               >
                 <i className="fas fa-unlock mr-2"></i>
@@ -209,11 +209,11 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         {/* User Management */}
         <div className="space-y-6">
-          <Card data-testid="card-user-management">
-            <CardHeader>
+          <Card data-testid="card-user-management" className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-100">
+            <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-t-lg">
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <i className="fas fa-users text-primary mr-3 text-xl"></i>
+                  <i className="fas fa-users text-white mr-3 text-xl"></i>
                   Manage Users
                 </div>
               </CardTitle>
@@ -238,7 +238,7 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
                 <Button 
                   onClick={handleAddUser}
                   disabled={addUserMutation.isPending}
-                  className="w-full"
+                  className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white border-none transform hover:scale-105 transition-all duration-200"
                   data-testid="button-add-user"
                 >
                   <i className="fas fa-plus mr-2"></i>
@@ -294,10 +294,10 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
 
         {/* Task Management */}
         <div className="space-y-6">
-          <Card data-testid="card-task-management">
-            <CardHeader>
+          <Card data-testid="card-task-management" className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-100">
+            <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-t-lg">
               <CardTitle className="flex items-center">
-                <i className="fas fa-tasks text-accent mr-3 text-xl"></i>
+                <i className="fas fa-tasks text-white mr-3 text-xl"></i>
                 Manage Tasks
               </CardTitle>
             </CardHeader>
@@ -328,7 +328,7 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
                 <Button 
                   onClick={handleSaveTasks}
                   disabled={updateTasksMutation.isPending}
-                  className="flex-1"
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-none transform hover:scale-105 transition-all duration-200"
                   data-testid="button-save-tasks"
                 >
                   <i className="fas fa-save mr-2"></i>
@@ -337,8 +337,7 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
                 <Button 
                   onClick={handleClearTasks}
                   disabled={updateTasksMutation.isPending}
-                  variant="secondary"
-                  className="flex-1"
+                  className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-none transform hover:scale-105 transition-all duration-200"
                   data-testid="button-clear-tasks"
                 >
                   <i className="fas fa-eraser mr-2"></i>
@@ -351,11 +350,11 @@ export default function AdminTab({ isUnlocked, onUnlock }: AdminTabProps) {
       </div>
 
       {/* Task Logs */}
-      <Card data-testid="card-task-logs">
-        <CardHeader>
+      <Card data-testid="card-task-logs" className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-100">
+        <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-t-lg">
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center">
-              <i className="fas fa-clipboard-list text-secondary mr-3 text-xl"></i>
+              <i className="fas fa-clipboard-list text-white mr-3 text-xl"></i>
               Task Logs
             </div>
             <div className="text-sm text-muted-foreground">
