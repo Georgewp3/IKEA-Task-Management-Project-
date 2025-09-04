@@ -1,0 +1,121 @@
+General
+
+The app should have two tabs:
+
+User Tab (default, public)
+
+Admin Tab (protected by a code).
+
+The frontend should be HTML, CSS, and JavaScript.
+
+The backend should be Node.js with Express.
+
+Use Replit DB or a JSON file for data persistence.
+
+Host frontend and backend together so users can access via the live Replit URL.
+
+Data Model
+
+User
+
+name (string)
+
+project (string)
+
+tasks (array of strings)
+
+TaskLog
+
+user (string)
+
+task (string)
+
+timestamp (date/time)
+
+User Tab (Default Page)
+
+A dropdown where the user selects their name.
+
+A text field that shows: PROJECT: <their assigned project>.
+
+A dropdown that lists tasks assigned by the Admin.
+
+A Submit Task button: when clicked, a new TaskLog entry is saved with the user, task, and current time.
+
+Admin Tab (Protected)
+
+The Admin tab should only become visible if the user enters the code 332133.
+
+Once unlocked, the Admin tab shows:
+
+A. Manage Users
+
+Input to add a user (name + project).
+
+Ability to delete a user.
+
+B. Manage Tasks
+
+For each user:
+
+Input to add/edit a list of tasks (comma-separated).
+
+Button to save tasks for that user.
+
+Button to clear all tasks for that user.
+
+C. Task Logs
+
+A table displaying all logged submissions:
+
+Columns: User, Task, Timestamp.
+
+Backend Requirements
+
+Expose REST API routes for:
+
+GET /api/users → list users
+
+POST /api/users → add user
+
+DELETE /api/users/:name → delete user
+
+GET /api/tasks/:user → get tasks for a user
+
+POST /api/tasks/:user → update tasks for a user
+
+POST /api/logs → add a new task log
+
+GET /api/logs → list all task logs
+
+Store everything persistently in Replit DB or a JSON file.
+
+Sync / Updates
+
+When Admin adds/edits tasks → they are saved to DB.
+
+When a User selects their name → tasks and project info are fetched from DB in real time.
+
+When a User submits a task → log is saved and visible immediately in Admin tab.
+
+UI / UX
+
+Default landing page = User Tab.
+
+Tabs are just two sections toggled by buttons.
+
+Admin tab is hidden until correct code 332133 is entered.
+
+Keep the design simple and mobile-friendly.
+
+👉 Deliverables Replit should generate:
+
+index.html → contains the two tabs (User + Admin).
+
+style.css → simple clean layout.
+
+main.js → frontend logic (fetching API, updating UI, handling submit).
+
+server.js → Node.js + Express backend with routes described above.
+
+replit.nix or package.json → to install express, cors, and replit-db
