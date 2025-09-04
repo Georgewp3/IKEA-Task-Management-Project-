@@ -34,50 +34,55 @@ export default function TaskManagement() {
 
   return (
     <div className="min-h-screen" style={{ background: '#aaa' }}>
-      {/* Admin Login Button (Top Right) */}
-      <div className="fixed top-4 right-4 z-50">
-        <div className="relative">
-          <Button
-            onClick={() => setShowAdminPrompt(!showAdminPrompt)}
-            className="px-5 py-3 text-white border-none rounded-lg shadow-lg transition-colors duration-300"
-            style={{ background: '#2c3e50' }}
-            onMouseEnter={(e) => e.currentTarget.style.background = '#1a252f'}
-            onMouseLeave={(e) => e.currentTarget.style.background = '#2c3e50'}
-            data-testid="button-admin-login-toggle"
-          >
-            🔒 Admin Login
-          </Button>
-          
-          {showAdminPrompt && (
-            <div className="absolute right-0 top-full mt-4 bg-white border border-gray-300 rounded-md shadow-lg p-3" style={{ minWidth: '200px' }}>
-              <Input
-                type="password"
-                placeholder="Enter admin code"
-                maxLength={6}
-                value={adminCode}
-                onChange={(e) => setAdminCode(e.target.value)}
-                className="mb-2 p-2 w-full border border-gray-300 rounded-md text-center"
-                data-testid="input-admin-code"
-                onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
-              />
-              <Button
-                onClick={handleAdminLogin}
-                className="w-full p-2 text-white border-none rounded-md cursor-pointer transition-colors duration-300"
-                style={{ background: '#2980b9' }}
-                onMouseEnter={(e) => e.currentTarget.style.background = '#1f6391'}
-                onMouseLeave={(e) => e.currentTarget.style.background = '#2980b9'}
-                data-testid="button-admin-submit"
-              >
-                Enter
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        {currentView === "user" && <UserTab />}
+        {currentView === "user" && (
+          <div>
+            <UserTab />
+            
+            {/* Admin Login Button - Moved below submit entries */}
+            <div className="flex justify-center mt-8">
+              <div className="relative">
+                <Button
+                  onClick={() => setShowAdminPrompt(!showAdminPrompt)}
+                  className="px-5 py-3 text-white border-none rounded-lg shadow-lg transition-colors duration-300"
+                  style={{ background: '#2c3e50' }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = '#1a252f'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = '#2c3e50'}
+                  data-testid="button-admin-login-toggle"
+                >
+                  🔒 Admin Login
+                </Button>
+                
+                {showAdminPrompt && (
+                  <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-4 bg-white border border-gray-300 rounded-md shadow-lg p-3" style={{ minWidth: '200px' }}>
+                    <Input
+                      type="password"
+                      placeholder="Enter admin code"
+                      maxLength={6}
+                      value={adminCode}
+                      onChange={(e) => setAdminCode(e.target.value)}
+                      className="mb-2 p-2 w-full border border-gray-300 rounded-md text-center"
+                      data-testid="input-admin-code"
+                      onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
+                    />
+                    <Button
+                      onClick={handleAdminLogin}
+                      className="w-full p-2 text-white border-none rounded-md cursor-pointer transition-colors duration-300"
+                      style={{ background: '#2980b9' }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#1f6391'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = '#2980b9'}
+                      data-testid="button-admin-submit"
+                    >
+                      Enter
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
         {currentView === "admin" && isAdminUnlocked && (
           <div>
             <div className="mb-6">
